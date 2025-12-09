@@ -46,7 +46,7 @@
 
         <div class="media-section-header">
           <h3>Media Items</h3>
-          <p>Add images/videos one by one.</p>
+          <p>Add images/videos or YouTube links one by one.</p>
         </div>
 
         <!-- Dynamic media blocks go here -->
@@ -93,19 +93,38 @@
 
         <strong>Media #${mediaCounter}</strong>
 
-        <label style="margin-top: 0.4rem;">File</label>
-        <input
-          type="file"
-          name="media_files"
-          accept="image/*,video/*"
-          required
-        />
+        <label style="margin-top: 0.4rem;">Media Type</label>
+        <select name="media_type" onchange="toggleMediaInput(${mediaCounter})" required>
+          <option value="">-- Select type --</option>
+          <option value="file">Upload File</option>
+          <option value="youtube">YouTube Link</option>
+        </select>
+
+        <!-- File upload -->
+        <div id="media_file_${mediaCounter}" style="display:none;">
+          <label style="margin-top: 0.4rem;">File</label>
+          <input
+            type="file"
+            name="media_files"
+            accept="image/*,video/*"
+          />
+        </div>
+
+        <!-- YouTube Link -->
+        <div id="media_youtube_${mediaCounter}" style="display:none;">
+          <label style="margin-top: 0.4rem;">YouTube URL</label>
+          <input
+            type="text"
+            name="media_youtube"
+            placeholder="https://youtube.com/watch?v=..."
+          />
+        </div>
 
         <label style="margin-top: 0.4rem;">Caption (optional)</label>
         <input
           type="text"
           name="media_desc"
-          placeholder="Describe this image/video"
+          placeholder="Describe this media"
         />
       `;
 
@@ -115,6 +134,42 @@
     function removeMediaBlock(id) {
       const el = document.getElementById("media_block_" + id);
       if (el) el.remove();
+    }
+
+    function toggleMediaInput(id) {
+      const block = document.getElementById("media_block_" + id);
+      if (!block) return;
+
+      const select = block.querySelector('select[name="media_type"]');
+      const type = select ? select.value : "";
+
+      const fileDiv = document.getElementById(`media_file_${id}`);
+      const youtubeDiv = document.getElementById(`media_youtube_${id}`);
+
+      if (!fileDiv || !youtubeDiv) return;
+
+      const fileInput = fileDiv.querySelector('input[type="file"]');
+      const youtubeInput = youtubeDiv.querySelector('input[name="media_youtube"]');
+
+      if (type === "file") {
+        fileDiv.style.display = "block";
+        youtubeDiv.style.display = "none";
+
+        if (fileInput) fileInput.required = true;
+        if (youtubeInput) youtubeInput.required = false;
+      } else if (type === "youtube") {
+        fileDiv.style.display = "none";
+        youtubeDiv.style.display = "block";
+
+        if (fileInput) fileInput.required = false;
+        if (youtubeInput) youtubeInput.required = true;
+      } else {
+        fileDiv.style.display = "none";
+        youtubeDiv.style.display = "none";
+
+        if (fileInput) fileInput.required = false;
+        if (youtubeInput) youtubeInput.required = false;
+      }
     }
   </script>
 

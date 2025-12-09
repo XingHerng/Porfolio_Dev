@@ -292,32 +292,36 @@ app.post("/admin/projects/:id/delete", requireEditAccess, async (req, res) => {
 // ===============================
 // SET COVER IMAGE FOR PROJECT
 // ===============================
-app.post("/admin/projects/:projectId/set-cover/:mediaId", requireEditAccess, async (req, res) => {
-  const { projectId, mediaId } = req.params;
+app.post(
+  "/admin/projects/:projectId/set-cover/:mediaId",
+  requireEditAccess,
+  async (req, res) => {
+    const { projectId, mediaId } = req.params;
 
-  try {
-    const [rows] = await pool.query(
-      "SELECT media_path FROM project_media WHERE media_id = ? AND project_id = ?",
-      [mediaId, projectId]
-    );
+    try {
+      const [rows] = await pool.query(
+        "SELECT media_path FROM project_media WHERE media_id = ? AND project_id = ?",
+        [mediaId, projectId]
+      );
 
-    if (rows.length === 0) {
-      return res.status(404).send("Media not found.");
+      if (rows.length === 0) {
+        return res.status(404).send("Media not found.");
+      }
+
+      const coverPath = rows[0].media_path;
+
+      await pool.query(
+        "UPDATE projects SET cover_image = ? WHERE project_id = ?",
+        [coverPath, projectId]
+      );
+
+      res.redirect(`/projects/${projectId}`);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Error setting cover image");
     }
-
-    const coverPath = rows[0].media_path;
-
-    await pool.query(
-      "UPDATE projects SET cover_image = ? WHERE project_id = ?",
-      [coverPath, projectId]
-    );
-
-    res.redirect(`/projects/${projectId}`);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error setting cover image");
   }
-});
+);
 
 // ===============================
 // ADMIN LOGIN (for CREATE PROJECT)
@@ -374,21 +378,70 @@ app.post("/admin/projects/new", requireAdmin, upload, async (req, res) => {
 
     const projectId = result.insertId;
 
-    // 2) Insert all uploaded media
-    req.files.forEach(async (file, index) => {
-      await pool.query(
-        `INSERT INTO project_media 
-         (project_id, media_type, media_path, media_description, sort_order)
-         VALUES (?, ?, ?, ?, ?)`,
-        [
-          projectId,
-          file.mimetype.startsWith("video") ? "video" : "image",
-          "/uploads/" + file.filename,
-          req.body[`media_desc_${index + 1}`] || "",
-          index + 1,
-        ]
-      );
-    });
+    // 2) Prepare media data from form
+    let { media_type, media_desc, media_youtube } = req.body;
+
+    // If no media added at all, just redirect
+    if (!media_type) {
+      return res.redirect("/projects");
+    }
+
+    // Normalise to arrays
+    if (!Array.isArray(media_type)) media_type = [media_type];
+
+    if (!media_desc) media_desc = [];
+    if (!Array.isArray(media_desc)) media_desc = [media_desc];
+
+    if (!media_youtube) media_youtube = [];
+    if (!Array.isArray(media_youtube)) media_youtube = [media_youtube];
+
+    const files = req.files || [];
+    let fileIndex = 0;
+    let sortOrder = 1;
+
+    // 3) Insert each media item (file or YouTube)
+    for (let i = 0; i < media_type.length; i++) {
+      const type = media_type[i];
+      const caption = media_desc[i] || "";
+
+      if (type === "file") {
+        const file = files[fileIndex];
+
+        // If user chose "file" but didn't upload anything, skip
+        if (!file) {
+          continue;
+        }
+
+        const mediaPath = "/uploads/" + file.filename;
+        const mediaKind = file.mimetype.startsWith("video") ? "video" : "image";
+
+        await pool.query(
+          `INSERT INTO project_media 
+           (project_id, media_type, media_path, media_description, sort_order)
+           VALUES (?, ?, ?, ?, ?)`,
+          [projectId, mediaKind, mediaPath, caption, sortOrder]
+        );
+
+        fileIndex++;
+        sortOrder++;
+      } else if (type === "youtube") {
+        const link = media_youtube[i];
+
+        // Skip if no link provided
+        if (!link || !link.trim()) {
+          continue;
+        }
+
+        await pool.query(
+          `INSERT INTO project_media 
+           (project_id, media_type, media_path, media_description, sort_order)
+           VALUES (?, ?, ?, ?, ?)`,
+          [projectId, "youtube", link.trim(), caption, sortOrder]
+        );
+
+        sortOrder++;
+      }
+    }
 
     res.redirect("/projects");
   } catch (err) {
