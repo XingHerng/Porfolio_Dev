@@ -403,7 +403,7 @@ app.post("/admin/projects/new", requireAdmin, upload, async (req, res) => {
 // ===============================
 // START SERVER
 // ===============================
-const PORT = 3000;
-app.listen(PORT, () =>
-  console.log(`Server running at http://localhost:${PORT}`)
-);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
