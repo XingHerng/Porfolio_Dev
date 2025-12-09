@@ -4,7 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import session from "express-session";
 import dotenv from "dotenv";
-import mysql from "mysql2/promise";   // MySQL
+import mysql from "mysql2/promise"; // MySQL
 import multer from "multer";
 
 // Load .env
@@ -224,7 +224,7 @@ app.get("/admin/projects/:id/edit", requireEditAccess, async (req, res) => {
   }
 });
 
-// Save edits
+// Save edits (project + existing media descriptions)
 app.post("/admin/projects/:id/edit", requireEditAccess, async (req, res) => {
   const projectId = req.params.id;
   const { project_name, project_short_description, project_type } = req.body;
@@ -275,6 +275,96 @@ app.post("/admin/projects/:id/edit", requireEditAccess, async (req, res) => {
     res.status(500).send("Error updating project");
   }
 });
+
+// ===============================
+// ADMIN: ADD NEW MEDIA TO EXISTING PROJECT
+// ===============================
+app.post(
+  "/admin/projects/:id/media/add",
+  requireEditAccess,
+  upload,
+  async (req, res) => {
+    const projectId = req.params.id;
+
+    try {
+      let { media_type, media_desc, media_youtube } = req.body;
+
+      // If nothing at all was submitted, just go back to edit page
+      if (
+        !media_type &&
+        (!req.files || req.files.length === 0) &&
+        !media_youtube
+      ) {
+        return res.redirect(`/admin/projects/${projectId}/edit`);
+      }
+
+      // Normalise to arrays (handles single input case)
+      if (media_type && !Array.isArray(media_type)) media_type = [media_type];
+      if (media_desc && !Array.isArray(media_desc)) media_desc = [media_desc];
+      if (media_youtube && !Array.isArray(media_youtube))
+        media_youtube = [media_youtube];
+
+      const files = req.files || [];
+      let fileIndex = 0;
+
+      // Continue sort_order after existing media
+      const [maxSortRows] = await pool.query(
+        "SELECT COALESCE(MAX(sort_order), 0) AS maxSort FROM project_media WHERE project_id = ?",
+        [projectId]
+      );
+      let sortOrder = maxSortRows[0].maxSort + 1;
+
+      const typesLength = media_type ? media_type.length : 0;
+
+      for (let i = 0; i < typesLength; i++) {
+        const type = media_type[i];
+        const caption = (media_desc && media_desc[i]) || "";
+
+        if (type === "file") {
+          const file = files[fileIndex];
+
+          // If user chose "file" but didn't actually upload anything, skip
+          if (!file) {
+            continue;
+          }
+
+          const mediaPath = "/uploads/" + file.filename;
+          const mediaKind = file.mimetype.startsWith("video") ? "video" : "image";
+
+          await pool.query(
+            `INSERT INTO project_media 
+             (project_id, media_type, media_path, media_description, sort_order)
+             VALUES (?, ?, ?, ?, ?)`,
+            [projectId, mediaKind, mediaPath, caption, sortOrder]
+          );
+
+          fileIndex++;
+          sortOrder++;
+        } else if (type === "youtube") {
+          const link = media_youtube && media_youtube[i];
+
+          if (!link || !link.trim()) {
+            continue;
+          }
+
+          await pool.query(
+            `INSERT INTO project_media 
+             (project_id, media_type, media_path, media_description, sort_order)
+             VALUES (?, ?, ?, ?, ?)`,
+            [projectId, "youtube", link.trim(), caption, sortOrder]
+          );
+
+          sortOrder++;
+        }
+      }
+
+      return res.redirect(`/projects/${projectId}`);
+    } catch (err) {
+      console.error("Error adding media to project:", err);
+      return res.status(500).send("Error adding media to project");
+    }
+  }
+);
 
 // Delete project
 app.post("/admin/projects/:id/delete", requireEditAccess, async (req, res) => {

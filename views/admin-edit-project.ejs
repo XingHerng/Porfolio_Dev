@@ -16,6 +16,9 @@
         <p class="form-error"><%= error %></p>
       <% } %>
 
+      <!-- ============================
+           FORM 1: EDIT PROJECT + CAPTIONS
+           ============================ -->
       <form action="/admin/projects/<%= project.project_id %>/edit"
             method="POST"
             class="admin-project-form">
@@ -42,7 +45,7 @@
 
         <hr />
 
-        <h3>Media Items</h3>
+        <h3>Existing Media</h3>
         <p style="font-size: 0.85rem; color: #555;">Update captions for each image/video below.</p>
 
         <% if (mediaList && mediaList.length > 0) { %>
@@ -55,10 +58,16 @@
               <div class="project-media-visual" style="margin-top: 0.5rem;">
                 <% if (media.media_type === 'image') { %>
                   <img src="<%= media.media_path %>" alt="" style="max-width: 100%; border-radius: 10px;" />
-                <% } else { %>
+                <% } else if (media.media_type === 'video') { %>
                   <video controls style="max-width: 100%; border-radius: 10px;">
                     <source src="<%= media.media_path %>" />
                   </video>
+                <% } else if (media.media_type === 'youtube') { %>
+                  <div class="youtube-embed">
+                    <a href="<%= media.media_path %>" target="_blank" rel="noopener noreferrer">
+                      View YouTube Video
+                    </a>
+                  </div>
                 <% } %>
               </div>
 
@@ -70,8 +79,53 @@
           <p>No media uploaded yet for this project.</p>
         <% } %>
 
-        <button type="submit" class="btn-send">
+        <button type="submit" class="btn-send" style="margin-top: 1rem;">
           Save Changes
+        </button>
+      </form>
+
+      <!-- ============================
+           FORM 2: ADD NEW MEDIA
+           ============================ -->
+      <hr style="margin: 2rem 0;" />
+
+      <h3>Add New Media</h3>
+      <p style="font-size: 0.85rem; color: #555;">
+        Add a new image, video, or YouTube link for this project.
+        If you choose <strong>File</strong>, upload an image/video.
+        If you choose <strong>YouTube</strong>, paste the video URL instead.
+      </p>
+
+      <form action="/admin/projects/<%= project.project_id %>/media/add"
+            method="POST"
+            enctype="multipart/form-data"
+            class="admin-project-form">
+
+        <div>
+          <label>Media Type</label>
+          <select name="media_type" required>
+            <option value="file">File (image/video)</option>
+            <option value="youtube">YouTube Link</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Upload File (for "File" type)</label>
+          <input type="file" name="mediaFile" />
+        </div>
+
+        <div>
+          <label>YouTube URL (for "YouTube" type)</label>
+          <input type="text" name="media_youtube" placeholder="https://www.youtube.com/..." />
+        </div>
+
+        <div>
+          <label>Caption (optional)</label>
+          <textarea name="media_desc" rows="2" placeholder="Short description or context for this media"></textarea>
+        </div>
+
+        <button type="submit" class="btn-send" style="margin-top: 1rem;">
+          Add Media
         </button>
       </form>
     </section>
