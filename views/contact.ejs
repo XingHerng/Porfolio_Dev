@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title><%= pageTitle %> | LXH Portfolio</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%- include("partials/navbar") %>
+
+  <main class="page contact-page">
+    <section class="contact-card">
+      <div class="contact-header">
+        <div class="contact-icon-circle">ME</div>
+        <p>
+          Let’s build something great together. Whether it’s a project, idea or just to
+          connect I’d like to hear from you.
+        </p>
+      </div>
+
+      <form class="contact-form">
+        <label>
+          Name:
+          <input type="text" name="name" />
+        </label>
+
+        <label>
+          Email:
+          <input type="email" name="email" />
+        </label>
+
+        <label>
+          Message:
+          <textarea name="message" rows="4"></textarea>
+        </label>
+
+        <button type="submit" class="btn-send">Send</button>
+      </form>
+
+      <div class="contact-footer">
+        <p>Looking forward to connecting with you soon.</p>
+        <div class="social-row">
+          <a href="#" class="social-box black">X</a>
+          <a href="#" class="social-box blue">in</a>
+          <a href="#" class="social-box fb">f</a>
+          <a href="#" class="social-box ig">◎</a>
+        </div>
+        <p class="contact-signoff">– Xing Herng</p>
+      </div>
+    </section>
+  </main>
+
+  <%- include("partials/footer") %>
+</body>
+</html>

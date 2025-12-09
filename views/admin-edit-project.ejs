@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title><%= pageTitle %> | LXH Portfolio</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%- include("partials/navbar") %>
+
+  <main class="page">
+    <section class="contact-card admin-project-card">
+      <h2>Edit Project</h2>
+
+      <% if (error) { %>
+        <p class="form-error"><%= error %></p>
+      <% } %>
+
+      <form action="/admin/projects/<%= project.project_id %>/edit"
+            method="POST"
+            class="admin-project-form">
+
+        <!-- Main project fields -->
+        <div>
+          <label>Project Name</label>
+          <input type="text" name="project_name" value="<%= project.project_name %>" required />
+        </div>
+
+        <div>
+          <label>Short Description</label>
+          <textarea name="project_short_description" rows="3" required><%= project.project_short_description %></textarea>
+        </div>
+
+        <div>
+          <label>Project Type</label>
+          <select name="project_type" required>
+            <option value="">-- Select type --</option>
+            <option value="development" <%= project.project_type === 'development' ? 'selected' : '' %>>Development</option>
+            <option value="design" <%= project.project_type === 'design' ? 'selected' : '' %>>Design</option>
+          </select>
+        </div>
+
+        <hr />
+
+        <h3>Media Items</h3>
+        <p style="font-size: 0.85rem; color: #555;">Update captions for each image/video below.</p>
+
+        <% if (mediaList && mediaList.length > 0) { %>
+          <% mediaList.forEach(function(media) { %>
+            <div class="media-item">
+              <input type="hidden" name="media_id" value="<%= media.media_id %>" />
+
+              <strong>Media #<%= media.sort_order || media.media_id %></strong>
+
+              <div class="project-media-visual" style="margin-top: 0.5rem;">
+                <% if (media.media_type === 'image') { %>
+                  <img src="<%= media.media_path %>" alt="" style="max-width: 100%; border-radius: 10px;" />
+                <% } else { %>
+                  <video controls style="max-width: 100%; border-radius: 10px;">
+                    <source src="<%= media.media_path %>" />
+                  </video>
+                <% } %>
+              </div>
+
+              <label style="margin-top: 0.6rem;">Caption</label>
+              <textarea name="media_desc" rows="2"><%= media.media_description || '' %></textarea>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <p>No media uploaded yet for this project.</p>
+        <% } %>
+
+        <button type="submit" class="btn-send">
+          Save Changes
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <%- include("partials/footer") %>
+</body>
+</html>

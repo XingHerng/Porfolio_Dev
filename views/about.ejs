@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>
+        <%= pageTitle %> | LXH Portfolio
+    </title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+    <%- include("partials/navbar") %>
+
+        <main class="page about-page">
+
+            <!-- ABOUT ME CARD -->
+            <section class="about-card">
+                <div class="about-main">
+                    <div class="about-text">
+                        <h2>About Me</h2>
+                        <p>
+                            Hi there! I’m a Year 2 student at Republic Polytechnic, currently pursuing a
+                            Diploma in Digital Design and Development.
+                        </p>
+                        <p>
+                            I enjoy blending creativity and logic — whether it’s coding up apps or
+                            designing clean, story-driven visuals.
+                        </p>
+                        <p>
+                            I’ve had hands-on experience with various programming languages, and I enjoy
+                            bringing ideas to life using tools like Adobe Photoshop and Illustrator.
+                        </p>
+
+                        <div class="role-bar">
+                            <div class="role-dev">Developer (80%)</div>
+                            <div class="role-des">Designer (20%)</div>
+                        </div>
+                    </div>
+
+                    <div class="about-photo">
+                        <img src="/img/about-photo.jpg" alt="Xing Herng photo" />
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- SKILLS CARD -->
+            <section class="skills-card">
+                <h2 class="skills-title">Skills</h2>
+
+                <div class="skills-grid skills-two-col">
+
+                    <!-- LEFT SIDE -->
+                    <div class="skills-col-left">
+                        <h3>Application Development</h3>
+                        <div class="skills-pills">
+                            <span class="skill-pill">Java</span>
+                            <span class="skill-pill">C#</span>
+                            <span class="skill-pill">Swift (Xcode)</span>
+                            <span class="skill-pill">Python</span>
+                            <span class="skill-pill">Unity</span>
+                            <span class="skill-pill">Mobile Development</span>
+                        </div>
+
+                        <h3>Back-End &amp; Database</h3>
+                        <div class="skills-pills">
+                            <span class="skill-pill">Node.js</span>
+                            <span class="skill-pill">Express</span>
+                            <span class="skill-pill">Python (Backend)</span>
+                            <span class="skill-pill">MySQL</span>
+                            <span class="skill-pill">MongoDB</span>
+                            <span class="skill-pill">Database Management (SQL)</span>
+                            <span class="skill-pill">Network &amp; Security Administration</span>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT SIDE -->
+                    <div class="skills-col-right">
+                        <h3>Front-End &amp; Design</h3>
+                        <div class="skills-pills">
+                            <span class="skill-pill">HTML</span>
+                            <span class="skill-pill">CSS</span>
+                            <span class="skill-pill">JavaScript</span>
+                            <span class="skill-pill">React</span>
+                            <span class="skill-pill">Adobe Illustrator</span>
+                            <span class="skill-pill">Adobe Photoshop</span>
+                            <span class="skill-pill">Figma</span>
+                            <span class="skill-pill">Prototyping</span>
+                            <span class="skill-pill">Data Visualization</span>
+                            <span class="skill-pill">Branding</span>
+                        </div>
+
+                        <h3>Soft Skills</h3>
+                        <div class="skills-pills">
+                            <span class="skill-pill">Adaptability</span>
+                            <span class="skill-pill">Collaboration</span>
+                            <span class="skill-pill">Communication</span>
+                            <span class="skill-pill">Leadership</span>
+                            <span class="skill-pill">Problem-Solving</span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+
+
+        </main>
+
+        <%- include("partials/footer") %>
+</body>
+
+</html>

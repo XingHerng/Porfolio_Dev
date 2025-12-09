@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title><%= pageTitle %> | LXH Portfolio</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%- include("partials/navbar") %>
+
+  <!-- HERO SECTION -->
+<section class="hero-banner">
+  <img src="/img/Digital_Banner.png" alt="Developer Designer Banner" />
+</section>
+
+  <!-- TWO CTA CARDS -->
+  <section class="cta-section">
+    <div class="cta-card cta-dev">
+      <h2>Development</h2>
+      <p>Explore my coding projects, from web apps to interactive experiences.</p>
+      <a href="/projects" class="btn-outline">Explore My Work</a>
+    </div>
+    <div class="cta-card cta-des">
+      <h2>Design</h2>
+      <p>See my graphic design, banners, and visual experiments.</p>
+      <a href="/projects" class="btn-outline pink">Explore My Work</a>
+    </div>
+  </section>
+
+  <!-- ABOUT PREVIEW (small strip like your screen) -->
+  <section class="home-about-preview">
+    <h2>About Me</h2>
+    <p>
+      I’m a Year 2 student in Digital Design and Development, blending creativity with code.
+      Curious? Get to know my story and skills.
+    </p>
+    <a href="/about" class="btn-primary">Learn More</a>
+  </section>
+
+  <%- include("partials/footer") %>
+</body>
+</html>

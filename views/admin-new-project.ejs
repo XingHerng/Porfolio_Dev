@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title><%= pageTitle %> | LXH Portfolio</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%- include("partials/navbar") %>
+
+  <main class="page">
+    <section class="contact-card admin-project-card">
+      <h2>Add New Project</h2>
+
+      <% if (error) { %>
+        <p class="form-error"><%= error %></p>
+      <% } %>
+
+      <!-- IMPORTANT: enctype for file upload -->
+      <form
+        action="/admin/projects/new"
+        method="POST"
+        class="admin-project-form"
+        enctype="multipart/form-data"
+      >
+        <div>
+          <label>Project Name</label>
+          <input type="text" name="project_name" required />
+        </div>
+
+        <div>
+          <label>Short Description</label>
+          <textarea name="project_short_description" rows="3" required></textarea>
+        </div>
+
+        <div>
+          <label>Project Type</label>
+          <select name="project_type" required>
+            <option value="">-- Select type --</option>
+            <option value="development">Development</option>
+            <option value="design">Design</option>
+          </select>
+        </div>
+
+        <hr />
+
+        <div class="media-section-header">
+          <h3>Media Items</h3>
+          <p>Add images/videos one by one.</p>
+        </div>
+
+        <!-- Dynamic media blocks go here -->
+        <div id="media-list"></div>
+
+        <button
+          type="button"
+          class="btn-add-media"
+          onclick="addMediaBlock()"
+        >
+          + Add Media
+        </button>
+
+        <button
+          type="submit"
+          class="btn-send"
+        >
+          Save Project
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    let mediaCounter = 0;
+
+    function addMediaBlock() {
+      mediaCounter++;
+
+      const list = document.getElementById("media-list");
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "media-item";
+      wrapper.id = "media_block_" + mediaCounter;
+
+      wrapper.innerHTML = `
+        <button
+          type="button"
+          class="delete-media"
+          onclick="removeMediaBlock(${mediaCounter})"
+        >
+          X
+        </button>
+
+        <strong>Media #${mediaCounter}</strong>
+
+        <label style="margin-top: 0.4rem;">File</label>
+        <input
+          type="file"
+          name="media_files"
+          accept="image/*,video/*"
+          required
+        />
+
+        <label style="margin-top: 0.4rem;">Caption (optional)</label>
+        <input
+          type="text"
+          name="media_desc"
+          placeholder="Describe this image/video"
+        />
+      `;
+
+      list.appendChild(wrapper);
+    }
+
+    function removeMediaBlock(id) {
+      const el = document.getElementById("media_block_" + id);
+      if (el) el.remove();
+    }
+  </script>
+
+  <%- include("partials/footer") %>
+</body>
+</html>

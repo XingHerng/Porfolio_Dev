@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title><%= pageTitle %> | LXH Portfolio</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%- include("partials/navbar") %>
+
+  <main class="page">
+    <section class="contact-card" style="max-width: 400px; margin-top: 2rem;">
+      <h2>Admin Login</h2>
+
+      <% if (error) { %>
+        <p style="color: red; font-size: 0.9rem;"><%= error %></p>
+      <% } %>
+
+      <form action="/admin/login" method="POST">
+        <label>Password</label>
+        <input type="password" name="password" required />
+        <button type="submit" class="btn-send" style="float: none; margin-top: 1rem;">
+          Enter
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <%- include("partials/footer") %>
+</body>
+</html>
