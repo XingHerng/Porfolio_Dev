@@ -29,16 +29,47 @@
           <% const isCover = project.cover_image && project.cover_image === media.media_path; %>
 
           <article class="project-media-item">
+
             <% if (media.media_type === 'image') { %>
+              <!-- IMAGE DISPLAY -->
               <div class="project-media-visual">
-                <img src="<%= media.media_path %>" alt="<%= media.media_description || project.project_name %>" />
+                <img src="<%= media.media_path %>" 
+                     alt="<%= media.media_description || project.project_name %>" />
               </div>
+
             <% } else if (media.media_type === 'video') { %>
+              <!-- VIDEO DISPLAY (Supports YouTube + MP4) -->
               <div class="project-media-visual">
-                <video controls>
-                  <source src="<%= media.media_path %>" />
-                  Your browser does not support the video tag.
-                </video>
+
+                <% 
+                  const isYouTube =
+                    media.media_path.includes("youtube.com") ||
+                    media.media_path.includes("youtu.be");
+                %>
+
+                <% if (isYouTube) { %>
+                  <!-- YOUTUBE EMBED -->
+                  <div class="video-embed-wrapper">
+                    <iframe
+                      width="100%"
+                      height="400"
+                      src="<%= media.media_path
+                              .replace('watch?v=', 'embed/')
+                              .replace('youtu.be/', 'www.youtube.com/embed/') %>"
+                      frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowfullscreen>
+                    </iframe>
+                  </div>
+
+                <% } else { %>
+                  <!-- NORMAL MP4 VIDEO -->
+                  <video controls>
+                    <source src="<%= media.media_path %>" />
+                    Your browser does not support the video tag.
+                  </video>
+                <% } %>
+
               </div>
             <% } %>
 
@@ -62,6 +93,7 @@
                 <% } %>
               </div>
             <% } %>
+
           </article>
         <% }) %>
       <% } else { %>
