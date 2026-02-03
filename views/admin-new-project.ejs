@@ -16,54 +16,35 @@
         <p class="form-error"><%= error %></p>
       <% } %>
 
-      <!-- IMPORTANT: enctype for file upload -->
       <form
         action="/admin/projects/new"
         method="POST"
-        class="admin-project-form"
         enctype="multipart/form-data"
+        class="admin-project-form"
       >
-        <div>
-          <label>Project Name</label>
-          <input type="text" name="project_name" required />
-        </div>
+        <label>Project Name</label>
+        <input type="text" name="project_name" required />
 
-        <div>
-          <label>Short Description</label>
-          <textarea name="project_short_description" rows="3" required></textarea>
-        </div>
+        <label>Short Description</label>
+        <textarea name="project_short_description" required></textarea>
 
-        <div>
-          <label>Project Type</label>
-          <select name="project_type" required>
-            <option value="">-- Select type --</option>
-            <option value="development">Development</option>
-            <option value="design">Design</option>
-          </select>
-        </div>
+        <label>Project Type</label>
+        <select name="project_type" required>
+          <option value="">-- Select --</option>
+          <option value="development">Development</option>
+          <option value="design">Design</option>
+        </select>
 
         <hr />
 
-        <div class="media-section-header">
-          <h3>Media Items</h3>
-          <p>Add images/videos or YouTube links one by one.</p>
-        </div>
-
-        <!-- Dynamic media blocks go here -->
+        <h3>Media</h3>
         <div id="media-list"></div>
 
-        <button
-          type="button"
-          class="btn-add-media"
-          onclick="addMediaBlock()"
-        >
+        <button type="button" class="btn-add-media" onclick="addMedia()">
           + Add Media
         </button>
 
-        <button
-          type="submit"
-          class="btn-send"
-        >
+        <button type="submit" class="btn-send">
           Save Project
         </button>
       </form>
@@ -71,105 +52,41 @@
   </main>
 
   <script>
-    let mediaCounter = 0;
-
-    function addMediaBlock() {
-      mediaCounter++;
-
+    function addMedia() {
       const list = document.getElementById("media-list");
 
-      const wrapper = document.createElement("div");
-      wrapper.className = "media-item";
-      wrapper.id = "media_block_" + mediaCounter;
+      const div = document.createElement("div");
+      div.className = "media-item";
 
-      wrapper.innerHTML = `
-        <button
-          type="button"
-          class="delete-media"
-          onclick="removeMediaBlock(${mediaCounter})"
-        >
-          X
-        </button>
-
-        <strong>Media #${mediaCounter}</strong>
-
-        <label style="margin-top: 0.4rem;">Media Type</label>
-        <select name="media_type" onchange="toggleMediaInput(${mediaCounter})" required>
-          <option value="">-- Select type --</option>
+      div.innerHTML = `
+        <label>Media Type</label>
+        <select name="media_type[]" onchange="toggleMedia(this)">
+          <option value="">-- Select --</option>
           <option value="file">Upload File</option>
-          <option value="youtube">YouTube Link</option>
+          <option value="youtube">YouTube</option>
         </select>
 
-        <!-- File upload -->
-        <div id="media_file_${mediaCounter}" style="display:none;">
-          <label style="margin-top: 0.4rem;">File</label>
-          <input
-            type="file"
-            name="media_files"
-            accept="image/*,video/*"
-          />
+        <div class="file-input" style="display:none;">
+          <input type="file" name="media_files[]" />
         </div>
 
-        <!-- YouTube Link -->
-        <div id="media_youtube_${mediaCounter}" style="display:none;">
-          <label style="margin-top: 0.4rem;">YouTube URL</label>
-          <input
-            type="text"
-            name="media_youtube"
-            placeholder="https://youtube.com/watch?v=..."
-          />
+        <div class="yt-input" style="display:none;">
+          <input type="text" name="media_youtube[]" placeholder="YouTube URL" />
         </div>
 
-        <label style="margin-top: 0.4rem;">Caption (optional)</label>
-        <input
-          type="text"
-          name="media_desc"
-          placeholder="Describe this media"
-        />
+        <input type="text" name="media_desc[]" placeholder="Caption (optional)" />
+        <hr />
       `;
 
-      list.appendChild(wrapper);
+      list.appendChild(div);
     }
 
-    function removeMediaBlock(id) {
-      const el = document.getElementById("media_block_" + id);
-      if (el) el.remove();
-    }
-
-    function toggleMediaInput(id) {
-      const block = document.getElementById("media_block_" + id);
-      if (!block) return;
-
-      const select = block.querySelector('select[name="media_type"]');
-      const type = select ? select.value : "";
-
-      const fileDiv = document.getElementById(`media_file_${id}`);
-      const youtubeDiv = document.getElementById(`media_youtube_${id}`);
-
-      if (!fileDiv || !youtubeDiv) return;
-
-      const fileInput = fileDiv.querySelector('input[type="file"]');
-      const youtubeInput = youtubeDiv.querySelector('input[name="media_youtube"]');
-
-      if (type === "file") {
-        fileDiv.style.display = "block";
-        youtubeDiv.style.display = "none";
-
-        if (fileInput) fileInput.required = true;
-        if (youtubeInput) youtubeInput.required = false;
-      } else if (type === "youtube") {
-        fileDiv.style.display = "none";
-        youtubeDiv.style.display = "block";
-
-        if (fileInput) fileInput.required = false;
-        if (youtubeInput) youtubeInput.required = true;
-      } else {
-        fileDiv.style.display = "none";
-        youtubeDiv.style.display = "none";
-
-        if (fileInput) fileInput.required = false;
-        if (youtubeInput) youtubeInput.required = false;
-      }
+    function toggleMedia(select) {
+      const block = select.closest(".media-item");
+      block.querySelector(".file-input").style.display =
+        select.value === "file" ? "block" : "none";
+      block.querySelector(".yt-input").style.display =
+        select.value === "youtube" ? "block" : "none";
     }
   </script>
 

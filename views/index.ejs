@@ -5,38 +5,80 @@
   <title><%= pageTitle %> | LXH Portfolio</title>
   <link rel="stylesheet" href="/css/style.css" />
 </head>
+
 <body>
+
   <%- include("partials/navbar") %>
 
-  <!-- HERO SECTION -->
-<section class="hero-banner">
-  <img src="/img/Digital_Banner.png" alt="Developer Designer Banner" />
-</section>
-
-  <!-- TWO CTA CARDS -->
-  <section class="cta-section">
-    <div class="cta-card cta-dev">
-      <h2>Development</h2>
-      <p>Explore my coding projects, from web apps to interactive experiences.</p>
-      <a href="/projects" class="btn-outline">Explore My Work</a>
-    </div>
-    <div class="cta-card cta-des">
-      <h2>Design</h2>
-      <p>See my graphic design, banners, and visual experiments.</p>
-      <a href="/projects" class="btn-outline pink">Explore My Work</a>
-    </div>
+  <!-- HERO -->
+  <section class="hero-banner">
+    <img src="/img/Digital_Banner.png" alt="Developer Designer Banner" />
   </section>
 
-  <!-- ABOUT PREVIEW (small strip like your screen) -->
+  <!-- CTA SECTION -->
+  <section class="cta-section">
+
+    <!-- DEVELOPMENT CARD -->
+    <div class="cta-card cta-dev">
+
+      <div class="cta-image">
+        <img src="/uploads/1765189566770-813075000-EscapeRoom.webp" class="active" alt="Dev preview 1" />
+        <img src="/uploads/1770155191278-15105735-Music_Lib.png" alt="Dev preview 2" />
+        <img src="/uploads/1770155631583-64377359-Ecocar.png" alt="Dev preview 3" />
+      </div>
+
+      <h2>Development</h2>
+      <p>
+        Explore my coding projects, from web apps to interactive experiences.
+      </p>
+      <a href="/projects" class="btn-outline">Explore My Work</a>
+    </div>
+
+    <!-- DESIGN CARD -->
+    <div class="cta-card cta-des">
+
+      <div class="cta-image">
+        <img src="/uploads/1765183945976-109769031-instagram-grid-template-3x3_Final.png" class="active" alt="Design preview 1" />
+        <img src="/uploads/1765191988662-248909267-Home.png" alt="Design preview 2" />
+        <img src="/uploads/LearnRPHighFid.png" alt="Design preview 3" />
+      </div>
+
+      <h2>Design</h2>
+      <p>
+        See my graphic design, banners, and visual experiments.
+      </p>
+      <a href="/projects" class="btn-outline pink">Explore My Work</a>
+    </div>
+
+  </section>
+
+  <!-- ABOUT PREVIEW -->
   <section class="home-about-preview">
-    <h2>About Me</h2>
-    <p>
-      I’m a Year 2 student in Digital Design and Development, blending creativity with code.
-      Curious? Get to know my story and skills.
-    </p>
-    <a href="/about" class="btn-primary">Learn More</a>
+    <div class="home-about-inner">
+      <h2>About Me</h2>
+      <p>
+        I’m a Year 2 student in Digital Design and Development, blending creativity with code.
+        Curious? Get to know my story and skills.
+      </p>
+      <a href="/about" class="btn-primary">Learn More</a>
+    </div>
   </section>
 
   <%- include("partials/footer") %>
+
+  <!-- IMAGE ROTATION SCRIPT -->
+  <script>
+    document.querySelectorAll(".cta-image").forEach(container => {
+      const images = container.querySelectorAll("img");
+      let index = 0;
+
+      setInterval(() => {
+        images[index].classList.remove("active");
+        index = (index + 1) % images.length;
+        images[index].classList.add("active");
+      }, 3000);
+    });
+  </script>
+
 </body>
 </html>

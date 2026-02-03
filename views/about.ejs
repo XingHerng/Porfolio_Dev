@@ -14,19 +14,23 @@
 
         <main class="page about-page">
 
-            <!-- ABOUT ME CARD -->
+            <!-- ABOUT ME -->
             <section class="about-card">
                 <div class="about-main">
+
                     <div class="about-text">
                         <h2>About Me</h2>
+
                         <p>
                             Hi there! I’m a Year 2 student at Republic Polytechnic, currently pursuing a
                             Diploma in Digital Design and Development.
                         </p>
+
                         <p>
                             I enjoy blending creativity and logic — whether it’s coding up apps or
                             designing clean, story-driven visuals.
                         </p>
+
                         <p>
                             I’ve had hands-on experience with various programming languages, and I enjoy
                             bringing ideas to life using tools like Adobe Photoshop and Illustrator.
@@ -41,17 +45,136 @@
                     <div class="about-photo">
                         <img src="/img/about-photo.jpg" alt="Xing Herng photo" />
                     </div>
+
                 </div>
             </section>
 
+            <!-- CERTIFICATIONS -->
+            <section class="certs-card">
+                <h2>Certifications</h2>
 
-            <!-- SKILLS CARD -->
+                <button class="cert-item" data-full="/img/cert-react-basic.png">
+                    <div class="cert-thumb">
+                        <img src="/img/cert-react-basic.png" alt="React Basic Certificate" />
+                    </div>
+                    <p>React (Basic)</p>
+                </button>
+
+                <button class="cert-item" data-full="/img/cert-sql-advanced.png">
+                    <div class="cert-thumb">
+                        <img src="/img/cert-sql-advanced.png" alt="sql (Advance)" />
+                    </div>
+                    <p>Cert sqlAdvanced</p>
+                </button>
+
+                <button class="cert-item" data-full="/img/Building_Morden_UIs_with_React_Router_v6.png">
+                    <div class="cert-thumb">
+                        <img src="/img/Building_Morden_UIs_with_React_Router_v6.png"
+                            alt="Building Morden UIs With React Router v6" />
+                    </div>
+                    <p>React Router v6</p>
+                </button>
+
+
+                <button class="cert-item" data-full="/img/Learning_React_Native.png">
+                    <div class="cert-thumb">
+                        <img src="/img/Learning_React_Native.png" alt="Learning React Native" />
+                    </div>
+                    <p>Learning React Native</p>
+                </button>
+
+
+                <button class="cert-item" data-full="/img/Unit_Testing_TDD.png">
+                    <div class="cert-thumb">
+                        <img src="/img/Unit_Testing_TDD.png" alt="Unit Testing TDD" />
+                    </div>
+                    <p>Unit Testing TDD</p>
+                </button>
+
+
+                <button class="cert-item" data-full="/img/Google_Analytics_4.png">
+                    <div class="cert-thumb">
+                        <img src="/img/Google_Analytics_4.png" alt="Google Analytics 4" />
+                    </div>
+                    <p>Google Analytics 4</p>
+                </button>
+
+                <button class="cert-item" data-full="/img/UX_Usability_Testing.png">
+                    <div class="cert-thumb">
+                        <img src="/img/UX_Usability_Testing.png" alt="UX Usability Testing" />
+                    </div>
+                    <p>UX Usability Testing</p>
+                </button>
+
+                <button class="cert-item" data-full="/img/UX_Usability_Testing.png">
+                    <div class="cert-thumb">
+                        <img src="/img/UX_Usability_Testing.png" alt="UX Usability Testing" />
+                    </div>
+                    <p>UX Usability Testing</p>
+                </button>
+
+                
+                <button class="cert-item" data-full="/img/Accessible_Component_Figma.png">
+                    <div class="cert-thumb">
+                        <img src="/img/Accessible_Component_Figma.png" alt="Accessible Component Figma" />
+                    </div>
+                    <p>Accessible Component Figma</p>
+                </button>
+
+                
+                <button class="cert-item" data-full="/img/NodeJS_Training.png">
+                    <div class="cert-thumb">
+                        <img src="/img/NodeJS_Training.png" alt="NodeJS Training" />
+                    </div>
+                    <p>NodeJS Training</p>
+                </button>
+
+                <button class="cert-item" data-full="/img/API_Web_Services.png">
+                    <div class="cert-thumb">
+                        <img src="/img/API_Web_Services.png" alt="API Web Services" />
+                    </div>
+                    <p>API Web Services</p>
+                </button>
+
+                <button class="cert-item" data-full="/img/Introduction_React.png">
+                    <div class="cert-thumb">
+                        <img src="/img/Introduction_React.png" alt="Introduction React" />
+                    </div>
+                    <p>Introduction React</p>
+                </button>
+
+                <button class="cert-item" data-full="/img/Creating_Persona.png">
+                    <div class="cert-thumb">
+                        <img src="/img/Creating_Persona.png" alt="Creating Persona" />
+                    </div>
+                    <p>Creating Persona</p>
+                </button>
+
+                
+                <button class="cert-item" data-full="/img/Learning_Jira.png">
+                    <div class="cert-thumb">
+                        <img src="/img/Learning_Jira.png" alt="Learning Jira" />
+                    </div>
+                    <p>Learning Jira</p>
+                </button>
+
+                <button class="cert-item" data-full="/img/Bug_Writing.png">
+                    <div class="cert-thumb">
+                        <img src="/img/Bug_Writing.png" alt="Bug Writing" />
+                    </div>
+                    <p>Bug Writing</p>
+                </button>
+
+
+                </div>
+            </section>
+
+            <!-- SKILLS -->
             <section class="skills-card">
                 <h2 class="skills-title">Skills</h2>
 
                 <div class="skills-grid skills-two-col">
 
-                    <!-- LEFT SIDE -->
                     <div class="skills-col-left">
                         <h3>Application Development</h3>
                         <div class="skills-pills">
@@ -75,7 +198,6 @@
                         </div>
                     </div>
 
-                    <!-- RIGHT SIDE -->
                     <div class="skills-col-right">
                         <h3>Front-End &amp; Design</h3>
                         <div class="skills-pills">
@@ -104,11 +226,37 @@
                 </div>
             </section>
 
-
-
         </main>
 
+        <!-- CERT MODAL -->
+        <div id="cert-modal" class="cert-modal">
+            <div class="cert-modal-backdrop"></div>
+            <div class="cert-modal-content">
+                <button class="cert-modal-close">&times;</button>
+                <img id="cert-modal-img" src="" alt="Certificate preview" />
+            </div>
+        </div>
+
         <%- include("partials/footer") %>
+
+            <script>
+                const modal = document.getElementById("cert-modal");
+                const modalImg = document.getElementById("cert-modal-img");
+
+                document.querySelectorAll(".cert-item").forEach(item => {
+                    item.addEventListener("click", () => {
+                        modalImg.src = item.dataset.full;
+                        modal.classList.add("active");
+                    });
+                });
+
+                document.querySelector(".cert-modal-close").onclick =
+                    document.querySelector(".cert-modal-backdrop").onclick = () => {
+                        modal.classList.remove("active");
+                        modalImg.src = "";
+                    };
+            </script>
+
 </body>
 
 </html>

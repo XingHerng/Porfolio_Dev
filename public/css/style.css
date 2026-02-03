@@ -834,3 +834,145 @@ body {
   font-size: 0.9rem;
   cursor: pointer;
 }
+
+/* ===========================
+   CERTIFICATIONS (FINAL FIX)
+   =========================== */
+
+.certs-card {
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: var(--shadow-soft);
+  padding: 2rem 2.5rem;
+  margin-bottom: 3rem;
+}
+
+.certs-scroll {
+  display: flex;
+  gap: 1.2rem;
+  overflow-x: auto;
+  padding: 1rem 0.2rem;
+}
+
+/* RESET BUTTON DEFAULTS */
+.cert-item {
+  all: unset;
+  flex: 0 0 150px;
+  cursor: pointer;
+  text-align: center;
+}
+
+/* 🔑 FIXED SIZE CONTAINER */
+.cert-thumb {
+  width: 150px;
+  aspect-ratio: 16 / 10;     /* ALL certs same shape */
+  background: #f3f3f3;
+  border-radius: 12px;
+  margin-left: 10px;
+  margin-right: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* IMAGE FITS INSIDE */
+.cert-thumb img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Hover */
+.cert-item:hover .cert-thumb {
+  transform: scale(1.05);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.2);
+}
+
+.cert-item p {
+  margin-top: 0.45rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* ===========================
+   CERT RESPONSIVE
+   =========================== */
+
+@media (max-width: 900px) {
+  .cert-item {
+    flex: 0 0 140px;
+  }
+
+  .cert-thumb {
+    width: 140px;
+  }
+}
+
+@media (max-width: 600px) {
+  .cert-item {
+    flex: 0 0 120px;
+  }
+
+  .cert-thumb {
+    width: 120px;
+  }
+
+  .certs-scroll {
+    padding-bottom: 0.5rem;
+  }
+}
+
+
+/* ===========================
+   CTA IMAGE ROTATOR (FINAL)
+   =========================== */
+
+.cta-image {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  margin-bottom: 1rem;
+  border-radius: 16px;
+  overflow: hidden;
+
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Inherit card background */
+.cta-dev .cta-image {
+  background: var(--light-blue);
+}
+
+.cta-des .cta-image {
+  background: var(--light-pink);
+}
+
+.cta-image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;      /* fits inside, no crop */
+  object-position: center;
+
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.cta-image img.active {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .cta-image {
+    height: 200px;
+  }
+}
