@@ -9,36 +9,32 @@ import multer from "multer";
 
 dotenv.config();
 
-/* =========================
-   PATH SETUP
-========================= */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 
-/* =========================
+/* ===========================
    ENSURE UPLOADS FOLDER
-   (CRITICAL FOR RAILWAY)
-========================= */
+=========================== */
 const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
 
-/* =========================
+/* ===========================
    VIEW ENGINE
-========================= */
+=========================== */
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-/* =========================
-   MIDDLEWARE
-========================= */
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(uploadDir));
 
+/* ===========================
+   SESSION
+=========================== */
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "secret",
@@ -52,43 +48,40 @@ app.use((req, res, next) => {
   next();
 });
 
-/* =========================
+/* ===========================
    DATABASE
-========================= */
+=========================== */
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
 });
 
-/* =========================
-   MULTER (MULTI MEDIA SAFE)
-========================= */
+/* ===========================
+   MULTER (MULTIPLE FILES)
+=========================== */
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
+  destination: uploadDir,
   filename: (req, file, cb) => {
     const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(null, unique + "-" + file.originalname);
   },
 });
-
 const upload = multer({ storage }).any();
 
-/* =========================
-   AUTH HELPERS
-========================= */
+/* ===========================
+   AUTH
+=========================== */
 function requireAdmin(req, res, next) {
   if (req.session.isAdmin) return next();
   res.redirect("/admin/login");
 }
 
-/* =========================
+/* ===========================
    PUBLIC ROUTES
-========================= */
+=========================== */
 
 // Home
 app.get("/", (req, res) => {
@@ -99,9 +92,7 @@ app.get("/", (req, res) => {
 app.get("/projects", async (req, res) => {
   try {
     const [projects] = await pool.query(
-      `SELECT project_id, project_name, project_short_description, project_type, cover_image
-       FROM projects
-       ORDER BY created_at DESC`
+      "SELECT * FROM projects ORDER BY created_at DESC"
     );
     res.render("projects", { pageTitle: "Projects", projects });
   } catch (err) {
@@ -110,17 +101,7 @@ app.get("/projects", async (req, res) => {
   }
 });
 
-// About
-app.get("/about", (req, res) => {
-  res.render("about", { pageTitle: "About" });
-});
-
-// Contact
-app.get("/contact", (req, res) => {
-  res.render("contact", { pageTitle: "Contact" });
-});
-
-// Project detail
+// Project detail (THIS IS YOUR DETAILS PAGE)
 app.get("/projects/:id", async (req, res) => {
   try {
     const projectId = req.params.id;
@@ -150,10 +131,11 @@ app.get("/projects/:id", async (req, res) => {
   }
 });
 
-/* =========================
+/* ===========================
    ADMIN AUTH
-========================= */
+=========================== */
 
+// Login
 app.get("/admin/login", (req, res) => {
   res.render("admin-login", { pageTitle: "Admin Login", error: null });
 });
@@ -163,25 +145,23 @@ app.post("/admin/login", (req, res) => {
     req.session.isAdmin = true;
     return res.redirect("/admin/projects/new");
   }
+
   res.render("admin-login", {
     pageTitle: "Admin Login",
-    error: "Incorrect password",
+    error: "Wrong password",
   });
 });
 
 app.post("/admin/logout", (req, res) => {
-  req.session.destroy(() => res.redirect("/"));
+  req.session.destroy(() => res.redirect("/projects"));
 });
 
-/* =========================
+/* ===========================
    ADMIN: ADD PROJECT
-========================= */
+=========================== */
 
 app.get("/admin/projects/new", requireAdmin, (req, res) => {
-  res.render("admin-new-project", {
-    pageTitle: "Add Project",
-    error: null,
-  });
+  res.render("admin-new-project", { pageTitle: "Add Project", error: null });
 });
 
 app.post("/admin/projects/new", requireAdmin, upload, async (req, res) => {
@@ -195,7 +175,6 @@ app.post("/admin/projects/new", requireAdmin, upload, async (req, res) => {
   }
 
   try {
-    // Create project
     const [result] = await pool.query(
       `INSERT INTO projects (project_name, project_short_description, project_type)
        VALUES (?, ?, ?)`,
@@ -204,7 +183,6 @@ app.post("/admin/projects/new", requireAdmin, upload, async (req, res) => {
 
     const projectId = result.insertId;
 
-    // Normalize inputs
     const media_type = [].concat(req.body.media_type || []);
     const media_desc = [].concat(req.body.media_desc || []);
     const media_youtube = [].concat(req.body.media_youtube || []);
@@ -214,38 +192,27 @@ app.post("/admin/projects/new", requireAdmin, upload, async (req, res) => {
     let sortOrder = 1;
 
     for (let i = 0; i < media_type.length; i++) {
-      const type = media_type[i];
       const caption = media_desc[i] || "";
 
-      if (type === "file") {
-        const file = files[fileIndex];
-        if (!file) continue;
-
+      if (media_type[i] === "file" && files[fileIndex]) {
+        const file = files[fileIndex++];
         const kind = file.mimetype.startsWith("video") ? "video" : "image";
 
         await pool.query(
           `INSERT INTO project_media
            (project_id, media_type, media_path, media_description, sort_order)
            VALUES (?, ?, ?, ?, ?)`,
-          [projectId, kind, "/uploads/" + file.filename, caption, sortOrder]
+          [projectId, kind, "/uploads/" + file.filename, caption, sortOrder++]
         );
-
-        fileIndex++;
-        sortOrder++;
       }
 
-      if (type === "youtube") {
-        const link = media_youtube[i];
-        if (!link || !link.trim()) continue;
-
+      if (media_type[i] === "youtube" && media_youtube[i]) {
         await pool.query(
           `INSERT INTO project_media
            (project_id, media_type, media_path, media_description, sort_order)
            VALUES (?, ?, ?, ?, ?)`,
-          [projectId, "youtube", link.trim(), caption, sortOrder]
+          [projectId, "youtube", media_youtube[i], caption, sortOrder++]
         );
-
-        sortOrder++;
       }
     }
 
@@ -256,10 +223,100 @@ app.post("/admin/projects/new", requireAdmin, upload, async (req, res) => {
   }
 });
 
-/* =========================
-   START SERVER
-========================= */
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running on port ${PORT}`);
+/* ===========================
+   ADMIN: EDIT PROJECT
+=========================== */
+
+app.get("/admin/projects/:id/edit", requireAdmin, async (req, res) => {
+  const projectId = req.params.id;
+
+  const [[project]] = await pool.query(
+    "SELECT * FROM projects WHERE project_id = ?",
+    [projectId]
+  );
+
+  const [mediaList] = await pool.query(
+    "SELECT * FROM project_media WHERE project_id = ? ORDER BY sort_order",
+    [projectId]
+  );
+
+  res.render("admin-edit-project", {
+    pageTitle: `Edit ${project.project_name}`,
+    project,
+    mediaList,
+    error: null,
+  });
 });
+
+/* ===========================
+   ADMIN: ADD MEDIA TO PROJECT
+=========================== */
+
+app.post(
+  "/admin/projects/:id/media/add",
+  requireAdmin,
+  upload,
+  async (req, res) => {
+    const projectId = req.params.id;
+
+    const media_type = [].concat(req.body.media_type || []);
+    const media_desc = [].concat(req.body.media_desc || []);
+    const media_youtube = [].concat(req.body.media_youtube || []);
+    const files = req.files || [];
+
+    const [[{ maxSort }]] = await pool.query(
+      "SELECT COALESCE(MAX(sort_order),0) AS maxSort FROM project_media WHERE project_id = ?",
+      [projectId]
+    );
+
+    let sortOrder = maxSort + 1;
+    let fileIndex = 0;
+
+    for (let i = 0; i < media_type.length; i++) {
+      const caption = media_desc[i] || "";
+
+      if (media_type[i] === "file" && files[fileIndex]) {
+        const file = files[fileIndex++];
+        const kind = file.mimetype.startsWith("video") ? "video" : "image";
+
+        await pool.query(
+          `INSERT INTO project_media
+           (project_id, media_type, media_path, media_description, sort_order)
+           VALUES (?, ?, ?, ?, ?)`,
+          [projectId, kind, "/uploads/" + file.filename, caption, sortOrder++]
+        );
+      }
+
+      if (media_type[i] === "youtube" && media_youtube[i]) {
+        await pool.query(
+          `INSERT INTO project_media
+           (project_id, media_type, media_path, media_description, sort_order)
+           VALUES (?, ?, ?, ?, ?)`,
+          [projectId, "youtube", media_youtube[i], caption, sortOrder++]
+        );
+      }
+    }
+
+    res.redirect(`/admin/projects/${projectId}/edit`);
+  }
+);
+
+/* ===========================
+   ADMIN: DELETE PROJECT
+=========================== */
+
+app.post("/admin/projects/:id/delete", requireAdmin, async (req, res) => {
+  await pool.query("DELETE FROM projects WHERE project_id = ?", [
+    req.params.id,
+  ]);
+  res.redirect("/projects");
+});
+
+/* ===========================
+   START SERVER
+=========================== */
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, "0.0.0.0", () =>
+  console.log(`Server running on port ${PORT}`)
+);
