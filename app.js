@@ -1,3 +1,7 @@
+// ===============================
+// app.js (FINAL – FULL FILE)
+// ===============================
+
 import express from "express";
 import path from "path";
 import fs from "fs";
@@ -9,32 +13,35 @@ import multer from "multer";
 
 dotenv.config();
 
+// ===============================
+// BASIC SETUP
+// ===============================
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 
-/* ===========================
-   ENSURE UPLOADS FOLDER
-=========================== */
+// ===============================
+// ENSURE UPLOADS FOLDER EXISTS
+// ===============================
 const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
 
-/* ===========================
-   VIEW ENGINE
-=========================== */
+// ===============================
+// VIEW ENGINE
+// ===============================
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+// ===============================
+// MIDDLEWARE
+// ===============================
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(uploadDir));
 
-/* ===========================
-   SESSION
-=========================== */
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "secret",
@@ -43,45 +50,49 @@ app.use(
   })
 );
 
+// Make admin flag available in all views
 app.use((req, res, next) => {
   res.locals.isAdmin = !!req.session.isAdmin;
   next();
 });
 
-/* ===========================
-   DATABASE
-=========================== */
+// ===============================
+// DATABASE
+// ===============================
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
 });
 
-/* ===========================
-   MULTER (MULTIPLE FILES)
-=========================== */
+// ===============================
+// MULTER (MULTIPLE FILES SAFE)
+// ===============================
 const storage = multer.diskStorage({
   destination: uploadDir,
   filename: (req, file, cb) => {
     const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, unique + "-" + file.originalname);
+    cb(null, `${unique}-${file.originalname}`);
   },
 });
+
 const upload = multer({ storage }).any();
 
-/* ===========================
-   AUTH
-=========================== */
+// ===============================
+// AUTH HELPERS
+// ===============================
 function requireAdmin(req, res, next) {
   if (req.session.isAdmin) return next();
-  res.redirect("/admin/login");
+  return res.redirect("/admin/login");
 }
 
-/* ===========================
-   PUBLIC ROUTES
-=========================== */
+// ===============================
+// PUBLIC ROUTES
+// ===============================
 
 // Home
 app.get("/", (req, res) => {
@@ -91,32 +102,41 @@ app.get("/", (req, res) => {
 // Projects list
 app.get("/projects", async (req, res) => {
   try {
-    const [projects] = await pool.query(
-      "SELECT * FROM projects ORDER BY created_at DESC"
-    );
-    res.render("projects", { pageTitle: "Projects", projects });
+    const [projects] = await pool.query(`
+      SELECT project_id, project_name, project_short_description,
+             project_type, cover_image
+      FROM projects
+      ORDER BY created_at DESC
+    `);
+
+    res.render("projects", {
+      pageTitle: "Projects",
+      projects,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error loading projects");
   }
 });
 
-// Project detail (THIS IS YOUR DETAILS PAGE)
+// Project detail
 app.get("/projects/:id", async (req, res) => {
-  try {
-    const projectId = req.params.id;
+  const projectId = req.params.id;
 
+  try {
     const [[project]] = await pool.query(
       "SELECT * FROM projects WHERE project_id = ?",
       [projectId]
     );
 
-    if (!project) return res.status(404).send("Project not found");
+    if (!project) {
+      return res.status(404).send("Project not found");
+    }
 
     const [mediaList] = await pool.query(
       `SELECT * FROM project_media
        WHERE project_id = ?
-       ORDER BY sort_order, media_id`,
+       ORDER BY sort_order, created_at`,
       [projectId]
     );
 
@@ -131,11 +151,19 @@ app.get("/projects/:id", async (req, res) => {
   }
 });
 
-/* ===========================
-   ADMIN AUTH
-=========================== */
+// About
+app.get("/about", (req, res) => {
+  res.render("about", { pageTitle: "About" });
+});
 
-// Login
+// Contact
+app.get("/contact", (req, res) => {
+  res.render("contact", { pageTitle: "Contact" });
+});
+
+// ===============================
+// ADMIN AUTH
+// ===============================
 app.get("/admin/login", (req, res) => {
   res.render("admin-login", { pageTitle: "Admin Login", error: null });
 });
@@ -148,175 +176,122 @@ app.post("/admin/login", (req, res) => {
 
   res.render("admin-login", {
     pageTitle: "Admin Login",
-    error: "Wrong password",
+    error: "Incorrect password",
   });
 });
 
 app.post("/admin/logout", (req, res) => {
-  req.session.destroy(() => res.redirect("/projects"));
+  req.session.destroy(() => res.redirect("/"));
 });
 
-/* ===========================
-   ADMIN: ADD PROJECT
-=========================== */
-
+// ===============================
+// ADMIN: ADD PROJECT
+// ===============================
 app.get("/admin/projects/new", requireAdmin, (req, res) => {
-  res.render("admin-new-project", { pageTitle: "Add Project", error: null });
-});
-
-app.post("/admin/projects/new", requireAdmin, upload, async (req, res) => {
-  const { project_name, project_short_description, project_type } = req.body;
-
-  if (!project_name || !project_short_description || !project_type) {
-    return res.render("admin-new-project", {
-      pageTitle: "Add Project",
-      error: "All fields required",
-    });
-  }
-
-  try {
-    const [result] = await pool.query(
-      `INSERT INTO projects (project_name, project_short_description, project_type)
-       VALUES (?, ?, ?)`,
-      [project_name, project_short_description, project_type]
-    );
-
-    const projectId = result.insertId;
-
-    const media_type = [].concat(req.body.media_type || []);
-    const media_desc = [].concat(req.body.media_desc || []);
-    const media_youtube = [].concat(req.body.media_youtube || []);
-    const files = req.files || [];
-
-    let fileIndex = 0;
-    let sortOrder = 1;
-
-    for (let i = 0; i < media_type.length; i++) {
-      const caption = media_desc[i] || "";
-
-      if (media_type[i] === "file" && files[fileIndex]) {
-        const file = files[fileIndex++];
-        const kind = file.mimetype.startsWith("video") ? "video" : "image";
-
-        await pool.query(
-          `INSERT INTO project_media
-           (project_id, media_type, media_path, media_description, sort_order)
-           VALUES (?, ?, ?, ?, ?)`,
-          [projectId, kind, "/uploads/" + file.filename, caption, sortOrder++]
-        );
-      }
-
-      if (media_type[i] === "youtube" && media_youtube[i]) {
-        await pool.query(
-          `INSERT INTO project_media
-           (project_id, media_type, media_path, media_description, sort_order)
-           VALUES (?, ?, ?, ?, ?)`,
-          [projectId, "youtube", media_youtube[i], caption, sortOrder++]
-        );
-      }
-    }
-
-    res.redirect("/projects");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error saving project");
-  }
-});
-
-/* ===========================
-   ADMIN: EDIT PROJECT
-=========================== */
-
-app.get("/admin/projects/:id/edit", requireAdmin, async (req, res) => {
-  const projectId = req.params.id;
-
-  const [[project]] = await pool.query(
-    "SELECT * FROM projects WHERE project_id = ?",
-    [projectId]
-  );
-
-  const [mediaList] = await pool.query(
-    "SELECT * FROM project_media WHERE project_id = ? ORDER BY sort_order",
-    [projectId]
-  );
-
-  res.render("admin-edit-project", {
-    pageTitle: `Edit ${project.project_name}`,
-    project,
-    mediaList,
+  res.render("admin-new-project", {
+    pageTitle: "Add Project",
     error: null,
   });
 });
 
-/* ===========================
-   ADMIN: ADD MEDIA TO PROJECT
-=========================== */
-
 app.post(
-  "/admin/projects/:id/media/add",
+  "/admin/projects/new",
   requireAdmin,
   upload,
   async (req, res) => {
-    const projectId = req.params.id;
+    const {
+      project_name,
+      project_short_description,
+      project_type,
+    } = req.body;
 
-    const media_type = [].concat(req.body.media_type || []);
-    const media_desc = [].concat(req.body.media_desc || []);
-    const media_youtube = [].concat(req.body.media_youtube || []);
-    const files = req.files || [];
-
-    const [[{ maxSort }]] = await pool.query(
-      "SELECT COALESCE(MAX(sort_order),0) AS maxSort FROM project_media WHERE project_id = ?",
-      [projectId]
-    );
-
-    let sortOrder = maxSort + 1;
-    let fileIndex = 0;
-
-    for (let i = 0; i < media_type.length; i++) {
-      const caption = media_desc[i] || "";
-
-      if (media_type[i] === "file" && files[fileIndex]) {
-        const file = files[fileIndex++];
-        const kind = file.mimetype.startsWith("video") ? "video" : "image";
-
-        await pool.query(
-          `INSERT INTO project_media
-           (project_id, media_type, media_path, media_description, sort_order)
-           VALUES (?, ?, ?, ?, ?)`,
-          [projectId, kind, "/uploads/" + file.filename, caption, sortOrder++]
-        );
-      }
-
-      if (media_type[i] === "youtube" && media_youtube[i]) {
-        await pool.query(
-          `INSERT INTO project_media
-           (project_id, media_type, media_path, media_description, sort_order)
-           VALUES (?, ?, ?, ?, ?)`,
-          [projectId, "youtube", media_youtube[i], caption, sortOrder++]
-        );
-      }
+    if (!project_name || !project_short_description || !project_type) {
+      return res.render("admin-new-project", {
+        pageTitle: "Add Project",
+        error: "All fields are required",
+      });
     }
 
-    res.redirect(`/admin/projects/${projectId}/edit`);
+    try {
+      // 1️⃣ Insert project
+      const [result] = await pool.query(
+        `INSERT INTO projects
+         (project_name, project_short_description, project_type)
+         VALUES (?, ?, ?)`,
+        [project_name, project_short_description, project_type]
+      );
+
+      const projectId = result.insertId;
+
+      // 2️⃣ Normalize inputs
+      const media_type = [].concat(req.body.media_type || []);
+      const media_desc = [].concat(req.body.media_desc || []);
+      const media_youtube = [].concat(req.body.media_youtube || []);
+      const files = req.files || [];
+
+      let fileIndex = 0;
+      let sortOrder = 1;
+
+      // 3️⃣ Insert media
+      for (let i = 0; i < media_type.length; i++) {
+        const type = media_type[i];
+        const caption = media_desc[i] || "";
+
+        if (type === "file") {
+          const file = files[fileIndex];
+          if (!file) continue;
+
+          const kind = file.mimetype.startsWith("video")
+            ? "video"
+            : "image";
+
+          await pool.query(
+            `INSERT INTO project_media
+             (project_id, media_type, media_path, media_description, sort_order)
+             VALUES (?, ?, ?, ?, ?)`,
+            [
+              projectId,
+              kind,
+              "/uploads/" + file.filename,
+              caption,
+              sortOrder++,
+            ]
+          );
+
+          fileIndex++;
+        }
+
+        if (type === "youtube") {
+          const link = media_youtube[i];
+          if (!link || !link.trim()) continue;
+
+          await pool.query(
+            `INSERT INTO project_media
+             (project_id, media_type, media_path, media_description, sort_order)
+             VALUES (?, ?, ?, ?, ?)`,
+            [
+              projectId,
+              "youtube",
+              link.trim(),
+              caption,
+              sortOrder++,
+            ]
+          );
+        }
+      }
+
+      res.redirect("/projects");
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Error saving project");
+    }
   }
 );
 
-/* ===========================
-   ADMIN: DELETE PROJECT
-=========================== */
-
-app.post("/admin/projects/:id/delete", requireAdmin, async (req, res) => {
-  await pool.query("DELETE FROM projects WHERE project_id = ?", [
-    req.params.id,
-  ]);
-  res.redirect("/projects");
-});
-
-/* ===========================
-   START SERVER
-=========================== */
-
+// ===============================
+// START SERVER (RAILWAY SAFE)
+// ===============================
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, "0.0.0.0", () =>
-  console.log(`Server running on port ${PORT}`)
-);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
+});
