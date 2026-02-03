@@ -57,6 +57,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage }).array("media_files[]");
 
+// ---------- HOME ----------
+app.get("/", (req, res) => {
+  res.render("index", { pageTitle: "Home" });
+});
+
 // ---------- ROUTES ----------
 app.get("/admin/projects/new", (req, res) => {
   res.render("admin-new-project", {
