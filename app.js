@@ -53,6 +53,7 @@ app.use(
 // Make admin flag available in all views
 app.use((req, res, next) => {
   res.locals.isAdmin = !!req.session.isAdmin;
+  res.locals.canEdit = !!req.session.canEdit;
   next();
 });
 
