@@ -12,51 +12,51 @@
 <body>
   <%- include("partials/navbar") %>
 
-  <main class="page projects-page">
-    <section class="projects-header">
-      <h1>My Portfolio</h1>
-      <p class="projects-subtitle">
-        <span class="text-dev">Development</span> &amp; <span class="text-des">Design</span>
-      </p>
+    <main class="page projects-page">
+      <section class="projects-header">
+        <h1>My Portfolio</h1>
+        <p class="projects-subtitle">
+          <span class="text-dev">Development</span> &amp; <span class="text-des">Design</span>
+        </p>
 
-      <a href="/admin/login" class="btn-primary" style="margin-bottom: 1.5rem; display: inline-block;">
+        <!-- <a href="/admin/login" class="btn-primary" style="margin-bottom: 1.5rem; display: inline-block;">
         + Add Project
-      </a>
-    </section>
+      </a> -->
+      </section>
 
-    <section class="projects-grid">
-      <% if (projects && projects.length > 0) { %>
-        <% projects.forEach((project, index) => { %>
-          <article
-            class="project-card <%= project.project_type === 'design' ? 'light-pink' : 'light-blue' %>">
+      <section class="projects-grid">
+        <% if (projects && projects.length> 0) { %>
+          <% projects.forEach((project, index)=> { %>
+            <article class="project-card <%= project.project_type === 'design' ? 'light-pink' : 'light-blue' %>">
 
-            <% if (project.cover_image) { %>
-              <div class="project-card-thumb">
-                <img
-                  src="<%= project.cover_image %>"
-                  alt="<%= project.project_name %> thumbnail"
-                  class="project-thumb"
-                />
-              </div>
-            <% } %>
+              <% if (project.cover_image) { %>
+                <div class="project-card-thumb">
+                  <img src="<%= project.cover_image %>" alt="<%= project.project_name %> thumbnail"
+                    class="project-thumb" />
+                </div>
+                <% } %>
 
-            <h3><%= project.project_name %></h3>
+                  <h3>
+                    <%= project.project_name %>
+                  </h3>
 
-            <p><%= project.project_short_description %></p>
+                  <p>
+                    <%= project.project_short_description %>
+                  </p>
 
-            <a href="/projects/<%= project.project_id %>"
-               class="btn-outline <%= project.project_type === 'design' ? 'pink' : '' %>">
-              View Project
-            </a>
-          </article>
-        <% }) %>
-      <% } else { %>
-        <p>No projects yet. Log in as admin to add your first project.</p>
-      <% } %>
-    </section>
-  </main>
+                  <a href="/projects/<%= project.project_id %>"
+                    class="btn-outline <%= project.project_type === 'design' ? 'pink' : '' %>">
+                    View Project
+                  </a>
+            </article>
+            <% }) %>
+              <% } else { %>
+                <p>No projects yet. Log in as admin to add your first project.</p>
+                <% } %>
+      </section>
+    </main>
 
-  <%- include("partials/footer") %>
+    <%- include("partials/footer") %>
 </body>
 
 </html>
