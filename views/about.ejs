@@ -1,190 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <title><%= pageTitle %> | LXH Portfolio</title>
-  <link rel="stylesheet" href="/css/style.css" />
+    <meta charset="UTF-8" />
+    <title>
+        <%= pageTitle %> | LXH Portfolio
+    </title>
+    <link rel="stylesheet" href="/css/style.css" />
 </head>
 
 <body>
-  <%- include("partials/navbar") %>
+    <%- include("partials/navbar") %>
 
-  <main class="page about-page">
+        <main class="page about-page">
 
-    <!-- ABOUT ME -->
-    <section class="about-card">
-      <div class="about-main">
+            <!-- ABOUT ME -->
+            <section class="about-card">
+                <div class="about-main">
 
-        <div class="about-text">
-          <h2>About Me</h2>
+                    <div class="about-text">
+                        <h2>About Me</h2>
 
-          <p>
-            Hi there! I’m a Year 2 student at Republic Polytechnic, currently pursuing a
-            Diploma in Digital Design and Development.
-          </p>
+                        <p>
+                            Hi there! I’m a Year 2 student at Republic Polytechnic, currently pursuing a
+                            Diploma in Digital Design and Development.
+                        </p>
 
-          <p>
-            I enjoy blending creativity and logic — whether it’s coding up apps or
-            designing clean, story-driven visuals.
-          </p>
+                        <p>
+                            I enjoy blending creativity and logic — whether it’s coding up apps or
+                            designing clean, story-driven visuals.
+                        </p>
 
-          <p>
-            I’ve had hands-on experience with various programming languages, and I enjoy
-            bringing ideas to life using tools like Adobe Photoshop and Illustrator.
-          </p>
+                        <p>
+                            I’ve had hands-on experience with various programming languages, and I enjoy
+                            bringing ideas to life using tools like Adobe Photoshop and Illustrator.
+                        </p>
 
-          <div class="role-bar">
-            <div class="role-dev">Developer (80%)</div>
-            <div class="role-des">Designer (20%)</div>
-          </div>
+                        <div class="role-bar">
+                            <div class="role-dev">Developer (80%)</div>
+                            <div class="role-des">Designer (20%)</div>
+                        </div>
+                    </div>
+
+                    <div class="about-photo">
+                        <img src="/img/about-photo.jpg" alt="Xing Herng photo" />
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- CERTIFICATIONS -->
+            <section class="certs-card">
+                <h2>Certifications</h2>
+
+                <div class="certs-scroll">
+
+                    <button type="button" class="cert-item" data-full="/img/cert-react-basic.png">
+                        <div class="cert-thumb"> <img src="/img/cert-react-basic.png" alt="React Basic Certificate" />
+                        </div>
+                        <p>React (Basic)</p>
+                    </button> <button type="button" class="cert-item" data-full="/img/cert-sql-advanced.png">
+                        <div class="cert-thumb"> <img src="/img/cert-sql-advanced.png" alt="SQL Advanced Certificate" />
+                        </div>
+                        <p>SQL (Advanced)</p>
+                    </button> <button type="button" class="cert-item"
+                        data-full="/img/Building_Morden_UIs_with_React_Router_v6.png">
+                        <div class="cert-thumb"> <img src="/img/Building_Morden_UIs_with_React_Router_v6.png"
+                                alt="Building Modern UIs with React Router v6" /> </div>
+                        <p>React Router v6</p>
+                    </button> <button type="button" class="cert-item" data-full="/img/Learning_React_Native.png">
+                        <div class="cert-thumb"> <img src="/img/Learning_React_Native.png"
+                                alt="Learning React Native" /> </div>
+                        <p>Learning React Native</p>
+                    </button> <button type="button" class="cert-item" data-full="/img/Unit_Testing_TDD.png">
+                        <div class="cert-thumb"> <img src="/img/Unit_Testing_TDD.png" alt="Unit Testing TDD" /> </div>
+                        <p>Unit Testing TDD</p>
+                    </button> <button type="button" class="cert-item" data-full="/img/Google_Analytics_4.png">
+                        <div class="cert-thumb"> <img src="/img/Google_Analytics_4.png" alt="Google Analytics 4" />
+                        </div>
+                        <p>Google Analytics 4</p>
+                    </button> <button type="button" class="cert-item" data-full="/img/UX_Usability_Testing.png">
+                        <div class="cert-thumb"> <img src="/img/UX_Usability_Testing.png" alt="UX Usability Testing" />
+                        </div>
+                        <p>UX Usability Testing</p>
+                    </button> <button type="button" class="cert-item" data-full="/img/Accessible_Component_Figma.png">
+                        <div class="cert-thumb"> <img src="/img/Accessible_Component_Figma.png"
+                                alt="Accessible Component Figma" /> </div>
+                        <p>Accessible Component Figma</p>
+                    </button> <button type="button" class="cert-item" data-full="/img/NodeJS_Training.png">
+                        <div class="cert-thumb"> <img src="/img/NodeJS_Training.png" alt="NodeJS Training" /> </div>
+                        <p>NodeJS Training</p>
+                    </button> <button type="button" class="cert-item" data-full="/img/API_Web_Services.png">
+                        <div class="cert-thumb"> <img src="/img/API_Web_Services.png" alt="API Web Services" /> </div>
+                        <p>API Web Services</p>
+                    </button> <button type="button" class="cert-item" data-full="/img/Introduction_React.png">
+                        <div class="cert-thumb"> <img src="/img/Introduction_React.png" alt="Introduction React" />
+                        </div>
+                        <p>Introduction React</p>
+                    </button> <button type="button" class="cert-item" data-full="/img/Creating_Persona.png">
+                        <div class="cert-thumb"> <img src="/img/Creating_Persona.png" alt="Creating Persona" /> </div>
+                        <p>Creating Persona</p>
+                    </button> <button type="button" class="cert-item" data-full="/img/Learning_Jira.png">
+                        <div class="cert-thumb"> <img src="/img/Learning_Jira.png" alt="Learning Jira" /> </div>
+                        <p>Learning Jira</p>
+                    </button> <button type="button" class="cert-item" data-full="/img/Bug_Writing.png">
+                        <div class="cert-thumb"> <img src="/img/Bug_Writing.png" alt="Bug Writing" /> </div>
+                        <p>Bug Writing</p>
+                    </button>
+
+                </div>
+            </section>
+
+            <!-- SKILLS (RESTORED & COMPLETE) -->
+            <section class="skills-card">
+                <h2 class="skills-title">Skills</h2>
+
+                <div class="skills-grid skills-two-col">
+
+                    <div class="skills-col-left">
+                        <h3>Application Development</h3>
+                        <div class="skills-pills">
+                            <span class="skill-pill">Java</span>
+                            <span class="skill-pill">C#</span>
+                            <span class="skill-pill">Swift (Xcode)</span>
+                            <span class="skill-pill">Python</span>
+                            <span class="skill-pill">Unity</span>
+                            <span class="skill-pill">Mobile Development</span>
+                        </div>
+
+                        <h3>Back-End &amp; Database</h3>
+                        <div class="skills-pills">
+                            <span class="skill-pill">Node.js</span>
+                            <span class="skill-pill">Express</span>
+                            <span class="skill-pill">MySQL</span>
+                            <span class="skill-pill">MongoDB</span>
+                            <span class="skill-pill">Database Management (SQL)</span>
+                        </div>
+                    </div>
+
+                    <div class="skills-col-right">
+                        <h3>Front-End &amp; Design</h3>
+                        <div class="skills-pills">
+                            <span class="skill-pill">HTML</span>
+                            <span class="skill-pill">CSS</span>
+                            <span class="skill-pill">JavaScript</span>
+                            <span class="skill-pill">React</span>
+                            <span class="skill-pill">Figma</span>
+                            <span class="skill-pill">Adobe Illustrator</span>
+                            <span class="skill-pill">Adobe Photoshop</span>
+                        </div>
+
+                        <h3>Soft Skills</h3>
+                        <div class="skills-pills">
+                            <span class="skill-pill">Adaptability</span>
+                            <span class="skill-pill">Collaboration</span>
+                            <span class="skill-pill">Communication</span>
+                            <span class="skill-pill">Problem-Solving</span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+
+        <!-- CERT MODAL -->
+        <div id="cert-modal" class="cert-modal" aria-hidden="true">
+            <div class="cert-modal-backdrop" data-close="1"></div>
+
+            <div class="cert-modal-content" role="dialog" aria-modal="true">
+                <button class="cert-modal-close" type="button" data-close="1">&times;</button>
+                <img id="cert-modal-img" src="" alt="Certificate preview" />
+            </div>
         </div>
 
-        <div class="about-photo">
-          <img src="/img/about-photo.jpg" alt="Xing Herng photo" />
-        </div>
+        <%- include("partials/footer") %>
 
-      </div>
-    </section>
+            <script>
+                const modal = document.getElementById("cert-modal");
+                const modalImg = document.getElementById("cert-modal-img");
 
-    <!-- CERTIFICATIONS -->
-    <section class="certs-card">
-      <h2>Certifications</h2>
+                function openCert(src) {
+                    modalImg.src = src;
+                    modal.classList.add("active");
+                    document.body.style.overflow = "hidden";
+                }
 
-      <div class="certs-scroll">
+                function closeCert() {
+                    modal.classList.remove("active");
+                    modalImg.src = "";
+                    document.body.style.overflow = "";
+                }
 
-        <button type="button" class="cert-item" data-full="/img/cert-react-basic.png">
-          <div class="cert-thumb">
-            <img src="/img/cert-react-basic.png" alt="React Basic Certificate" />
-          </div>
-          <p>React (Basic)</p>
-        </button>
+                document.querySelectorAll(".cert-item").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        openCert(btn.dataset.full);
+                    });
+                });
 
-        <button type="button" class="cert-item" data-full="/img/cert-sql-advanced.png">
-          <div class="cert-thumb">
-            <img src="/img/cert-sql-advanced.png" alt="SQL Advanced Certificate" />
-          </div>
-          <p>SQL (Advanced)</p>
-        </button>
+                modal.addEventListener("click", e => {
+                    if (e.target.dataset.close) closeCert();
+                });
 
-        <button type="button" class="cert-item" data-full="/img/Building_Morden_UIs_with_React_Router_v6.png">
-          <div class="cert-thumb">
-            <img src="/img/Building_Morden_UIs_with_React_Router_v6.png" alt="React Router v6" />
-          </div>
-          <p>React Router v6</p>
-        </button>
-
-        <button type="button" class="cert-item" data-full="/img/Learning_React_Native.png">
-          <div class="cert-thumb">
-            <img src="/img/Learning_React_Native.png" alt="Learning React Native" />
-          </div>
-          <p>React Native</p>
-        </button>
-
-        <button type="button" class="cert-item" data-full="/img/NodeJS_Training.png">
-          <div class="cert-thumb">
-            <img src="/img/NodeJS_Training.png" alt="NodeJS Training" />
-          </div>
-          <p>Node.js</p>
-        </button>
-
-      </div>
-    </section>
-
-    <!-- SKILLS (RESTORED & COMPLETE) -->
-    <section class="skills-card">
-      <h2 class="skills-title">Skills</h2>
-
-      <div class="skills-grid skills-two-col">
-
-        <div class="skills-col-left">
-          <h3>Application Development</h3>
-          <div class="skills-pills">
-            <span class="skill-pill">Java</span>
-            <span class="skill-pill">C#</span>
-            <span class="skill-pill">Swift (Xcode)</span>
-            <span class="skill-pill">Python</span>
-            <span class="skill-pill">Unity</span>
-            <span class="skill-pill">Mobile Development</span>
-          </div>
-
-          <h3>Back-End &amp; Database</h3>
-          <div class="skills-pills">
-            <span class="skill-pill">Node.js</span>
-            <span class="skill-pill">Express</span>
-            <span class="skill-pill">MySQL</span>
-            <span class="skill-pill">MongoDB</span>
-            <span class="skill-pill">Database Management (SQL)</span>
-          </div>
-        </div>
-
-        <div class="skills-col-right">
-          <h3>Front-End &amp; Design</h3>
-          <div class="skills-pills">
-            <span class="skill-pill">HTML</span>
-            <span class="skill-pill">CSS</span>
-            <span class="skill-pill">JavaScript</span>
-            <span class="skill-pill">React</span>
-            <span class="skill-pill">Figma</span>
-            <span class="skill-pill">Adobe Illustrator</span>
-            <span class="skill-pill">Adobe Photoshop</span>
-          </div>
-
-          <h3>Soft Skills</h3>
-          <div class="skills-pills">
-            <span class="skill-pill">Adaptability</span>
-            <span class="skill-pill">Collaboration</span>
-            <span class="skill-pill">Communication</span>
-            <span class="skill-pill">Problem-Solving</span>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-  </main>
-
-  <!-- CERT MODAL -->
-  <div id="cert-modal" class="cert-modal" aria-hidden="true">
-    <div class="cert-modal-backdrop" data-close="1"></div>
-
-    <div class="cert-modal-content" role="dialog" aria-modal="true">
-      <button class="cert-modal-close" type="button" data-close="1">&times;</button>
-      <img id="cert-modal-img" src="" alt="Certificate preview" />
-    </div>
-  </div>
-
-  <%- include("partials/footer") %>
-
-  <script>
-    const modal = document.getElementById("cert-modal");
-    const modalImg = document.getElementById("cert-modal-img");
-
-    function openCert(src) {
-      modalImg.src = src;
-      modal.classList.add("active");
-      document.body.style.overflow = "hidden";
-    }
-
-    function closeCert() {
-      modal.classList.remove("active");
-      modalImg.src = "";
-      document.body.style.overflow = "";
-    }
-
-    document.querySelectorAll(".cert-item").forEach(btn => {
-      btn.addEventListener("click", () => {
-        openCert(btn.dataset.full);
-      });
-    });
-
-    modal.addEventListener("click", e => {
-      if (e.target.dataset.close) closeCert();
-    });
-
-    document.addEventListener("keydown", e => {
-      if (e.key === "Escape") closeCert();
-    });
-  </script>
+                document.addEventListener("keydown", e => {
+                    if (e.key === "Escape") closeCert();
+                });
+            </script>
 
 </body>
+
 </html>

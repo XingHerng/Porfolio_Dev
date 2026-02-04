@@ -835,6 +835,7 @@ body {
   cursor: pointer;
 }
 
+
 /* ===========================
    CERTIFICATIONS (STABLE)
    =========================== */
@@ -979,6 +980,24 @@ body {
   }
 }
 
+
+/* ===========================
+   CTA IMAGE ROTATOR (FINAL)
+   =========================== */
+
+.cta-image {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  margin-bottom: 1rem;
+  border-radius: 16px;
+  overflow: hidden;
+
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* Inherit card background */
 .cta-dev .cta-image {
