@@ -856,10 +856,16 @@ body {
 
 /* RESET BUTTON DEFAULTS */
 .cert-item {
-  all: unset;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+
   flex: 0 0 150px;
   cursor: pointer;
   text-align: center;
+
+  font: inherit;
 }
 
 /* 🔑 FIXED SIZE CONTAINER */
