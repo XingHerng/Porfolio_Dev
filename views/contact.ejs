@@ -10,6 +10,16 @@
 
   <main class="page contact-page">
     <section class="contact-card">
+
+      <!-- SUCCESS / ERROR MESSAGES -->
+      <% if (query.success) { %>
+        <p class="success-msg">Message sent successfully! 🚀</p>
+      <% } %>
+
+      <% if (query.error) { %>
+        <p class="error-msg">Something went wrong. Please try again.</p>
+      <% } %>
+
       <div class="contact-header">
         <div class="contact-icon-circle">ME</div>
         <p>
@@ -18,20 +28,21 @@
         </p>
       </div>
 
-      <form class="contact-form">
+      <!-- IMPORTANT: method + action -->
+      <form class="contact-form" method="POST" action="/contact">
         <label>
           Name:
-          <input type="text" name="name" />
+          <input type="text" name="name" required />
         </label>
 
         <label>
           Email:
-          <input type="email" name="email" />
+          <input type="email" name="email" required />
         </label>
 
         <label>
           Message:
-          <textarea name="message" rows="4"></textarea>
+          <textarea name="message" rows="4" required></textarea>
         </label>
 
         <button type="submit" class="btn-send">Send</button>
@@ -41,12 +52,13 @@
         <p>Looking forward to connecting with you soon.</p>
         <div class="social-row">
           <a href="#" class="social-box black">X</a>
-          <a href="#" class="social-box blue">in</a>
+          <a href="https://www.linkedin.com/in/xing-herng-lim-405286311/" class="social-box blue">in</a>
           <a href="#" class="social-box fb">f</a>
           <a href="#" class="social-box ig">◎</a>
         </div>
         <p class="contact-signoff">– Xing Herng</p>
       </div>
+
     </section>
   </main>
 

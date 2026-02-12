@@ -10,6 +10,7 @@ import session from "express-session";
 import dotenv from "dotenv";
 import mysql from "mysql2/promise";
 import multer from "multer";
+import nodemailer from "nodemailer";
 
 dotenv.config();
 
@@ -50,7 +51,7 @@ app.use(
   })
 );
 
-// Make admin flag available in all views
+// Make admin flags available in all views
 app.use((req, res, next) => {
   res.locals.isAdmin = !!req.session.isAdmin;
   res.locals.canEdit = !!req.session.canEdit;
@@ -68,9 +69,8 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
-
   enableKeepAlive: true,
-  keepAliveInitialDelay: 0
+  keepAliveInitialDelay: 0,
 });
 
 // ===============================
@@ -160,9 +160,49 @@ app.get("/about", (req, res) => {
   res.render("about", { pageTitle: "About" });
 });
 
-// Contact
+// ===============================
+// CONTACT (GET)
+// ===============================
 app.get("/contact", (req, res) => {
-  res.render("contact", { pageTitle: "Contact" });
+  res.render("contact", {
+    pageTitle: "Contact",
+    query: req.query,
+  });
+});
+
+// ===============================
+// CONTACT (POST)
+// ===============================
+app.post("/contact", async (req, res) => {
+  const { name, email, message } = req.body;
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"Portfolio Contact" <${email}>`,
+      to: process.env.EMAIL_USER,
+      subject: `New message from ${name}`,
+      text: `
+Name: ${name}
+Email: ${email}
+
+Message:
+${message}
+      `,
+    });
+
+    res.redirect("/contact?success=true");
+  } catch (err) {
+    console.error(err);
+    res.redirect("/contact?error=true");
+  }
 });
 
 // ===============================
@@ -217,7 +257,6 @@ app.post(
     }
 
     try {
-      // 1️⃣ Insert project
       const [result] = await pool.query(
         `INSERT INTO projects
          (project_name, project_short_description, project_type)
@@ -227,7 +266,6 @@ app.post(
 
       const projectId = result.insertId;
 
-      // 2️⃣ Normalize inputs
       const media_type = [].concat(req.body.media_type || []);
       const media_desc = [].concat(req.body.media_desc || []);
       const media_youtube = [].concat(req.body.media_youtube || []);
@@ -236,7 +274,6 @@ app.post(
       let fileIndex = 0;
       let sortOrder = 1;
 
-      // 3️⃣ Insert media
       for (let i = 0; i < media_type.length; i++) {
         const type = media_type[i];
         const caption = media_desc[i] || "";
@@ -293,7 +330,7 @@ app.post(
 );
 
 // ===============================
-// START SERVER (RAILWAY SAFE)
+// START SERVER
 // ===============================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
