@@ -10,7 +10,7 @@ import session from "express-session";
 import dotenv from "dotenv";
 import mysql from "mysql2/promise";
 import multer from "multer";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
 dotenv.config();
 
@@ -21,6 +21,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // ===============================
 // ENSURE UPLOADS FOLDER EXISTS
@@ -171,29 +172,15 @@ app.get("/contact", (req, res) => {
 });
 
 // ===============================
-// CONTACT (POST)
+// CONTACT (POST) — RESEND (NO SMTP)
 // ===============================
 app.post("/contact", async (req, res) => {
   const { name, email, message } = req.body;
 
   try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      family: 4, // ✅ FORCE IPv4 (fixes ENETUNREACH)
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
-
-    await transporter.sendMail({
-      from: `"Portfolio Contact" <${email}>`,
-      to: process.env.EMAIL_USER,
+    await resend.emails.send({
+      from: "Portfolio <onboarding@resend.dev>",
+      to: process.env.EMAIL_TO,
       subject: `New message from ${name}`,
       text: `
 Name: ${name}
