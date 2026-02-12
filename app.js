@@ -180,7 +180,8 @@ app.post("/contact", async (req, res) => {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
-      secure: false, // STARTTLS
+      secure: false,
+      family: 4, // ✅ FORCE IPv4 (fixes ENETUNREACH)
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
